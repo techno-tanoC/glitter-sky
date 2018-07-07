@@ -1,0 +1,33 @@
+-- This file has been generated from package.yaml by hpack version 0.28.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: d66982d8589f33a7758b402dad21c2ccd7f772baaa26d16bcaf5ae06d318c7b6
+
+name:           glitter-sky
+version:        0.1.0.0
+category:       Web
+homepage:       https://github.com/githubuser/glitter-sky#readme
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2018 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+extra-source-files:
+    README.md
+
+executable glitter-sky
+  main-is: Main.hs
+  other-modules:
+      GlitterSky.Tracker
+      Paths_glitter_sky
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , bytestring >=0.10.8 && <0.11
+    , http-client >=0.5.13 && <0.6
+    , http-client-tls >=0.3.5 && <0.4
+  default-language: Haskell2010
