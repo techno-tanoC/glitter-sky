@@ -1,44 +1,62 @@
 module GlitterSky.Tracker where
 
-import qualified Data.List as L
-import Data.Traversable (traverse)
 import Control.Concurrent.MVar
 import qualified Control.Concurrent as C
+import Control.Exception as Ex
+import Data.Traversable (traverse)
+import qualified Data.Map.Strict as Map
 
 data Tracker a = Tracker {
-  container :: MVar a,
+  content :: MVar a,
   threadId :: C.ThreadId
 }
-
-instance Eq (Tracker a) where
-  x == y = threadId x == threadId y
-
-startTracker :: a -> (MVar a -> IO ()) -> IO (Tracker a)
-startTracker a f = do
-  var <- newMVar a
-  id <- C.forkIO $ f var
-  return $ Tracker var id
 
 cancelTracker :: Tracker a -> IO ()
 cancelTracker = C.killThread . threadId
 
-readContainer :: Tracker a -> IO a
-readContainer = readMVar . container
+readContent :: Tracker a -> IO a
+readContent = readMVar . content
 
-type Trackers a = [Tracker a]
 type Id = String
+type Trackers a = MVar (Map.Map Id (Tracker a))
 
-find :: Id -> Trackers a -> Maybe (Tracker a)
-find id = L.find eq
-  where eq t = (show . threadId $ t) == id
+newTrackers :: IO (Trackers a)
+newTrackers = newMVar Map.empty
+
+insert :: Show a => Tracker a -> Trackers a -> IO ()
+insert t mvar = modifyMVarMasked_ mvar $ \ts -> do
+  return $ Map.insert (show . threadId $ t) t ts
+
+delete :: Show a => Id -> Trackers a -> IO ()
+delete id mvar = modifyMVarMasked_ mvar $ \ts -> do
+  return $ Map.delete id ts
+
+startTracker :: Show a => a -> Trackers a -> (MVar a -> IO ()) -> IO ()
+startTracker a mvar f = do
+  c <- newMVar a
+  C.forkIO $ bracket
+    (do
+      my <- C.myThreadId
+      let tracker = Tracker c my
+      insert tracker mvar
+    )
+    (\_ -> do
+      my <- C.myThreadId
+      delete (show my) mvar
+    )
+    (\_ -> f c)
+  return ()
 
 cancel :: Id -> Trackers a -> IO Bool
-cancel id ts = do
-  case find id ts of
+cancel id mvar = do
+  ts <- readMVar mvar
+  case Map.lookup id ts of
     Just t -> do
       cancelTracker t
       return True
     Nothing -> return False
 
 collect :: Trackers a -> IO [a]
-collect = traverse readContainer
+collect mvar = do
+  ts <- readMVar mvar
+  traverse readContent $ Map.elems ts
