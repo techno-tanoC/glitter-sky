@@ -2,7 +2,7 @@ module GlitterSky.Tracker where
 
 import Control.Concurrent.MVar
 import qualified Control.Concurrent as C
-import Control.Exception as Ex
+import Control.Exception (finally)
 import Data.Traversable (traverse)
 import qualified Data.Map.Strict as Map
 
@@ -34,17 +34,17 @@ delete id mvar = modifyMVarMasked_ mvar $ \ts -> do
 startTracker :: Show a => a -> Trackers a -> (MVar a -> IO ()) -> IO C.ThreadId
 startTracker a mvar f = do
   c <- newMVar a
-  C.forkIO $ bracket
+  C.forkIO $ finally
     (do
       my <- C.myThreadId
       let tracker = Tracker c my
       insert tracker mvar
+      f c
     )
-    (\_ -> do
+    (do
       my <- C.myThreadId
       delete (show my) mvar
     )
-    (\_ -> f c)
 
 cancel :: Id -> Trackers a -> IO Bool
 cancel id mvar = do
