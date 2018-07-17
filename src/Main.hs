@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
+import qualified GlitterSky.Renamer as Renamer
 import qualified GlitterSky.HTTP as HTTP
 import qualified GlitterSky.Tracker as T
 import qualified GlitterSky.Progress as P
