@@ -23,15 +23,15 @@ type Trackers a = MVar (Map.Map Id (Tracker a))
 newTrackers :: IO (Trackers a)
 newTrackers = newMVar Map.empty
 
-insert :: Show a => Tracker a -> Trackers a -> IO ()
+insert :: Tracker a -> Trackers a -> IO ()
 insert t mvar = modifyMVarMasked_ mvar $ \ts -> do
   return $ Map.insert (show . threadId $ t) t ts
 
-delete :: Show a => Id -> Trackers a -> IO ()
+delete :: Id -> Trackers a -> IO ()
 delete id mvar = modifyMVarMasked_ mvar $ \ts -> do
   return $ Map.delete id ts
 
-startTracker :: Show a => a -> Trackers a -> (MVar a -> IO ()) -> IO C.ThreadId
+startTracker :: a -> Trackers a -> (MVar a -> IO ()) -> IO C.ThreadId
 startTracker a mvar f = do
   c <- newMVar a
   C.forkIO $ finally
