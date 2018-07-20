@@ -7,8 +7,8 @@ import qualified GlitterSky.Progress as P
 import qualified GlitterSky.Renamer as Renamer
 import qualified GlitterSky.Tracker as T
 
--- import Control.Monad
--- import Control.Concurrent
+import Control.Monad
+import Control.Concurrent
 import Control.Concurrent.MVar
 import qualified Data.ByteString as BS
 import qualified System.IO as IO
@@ -52,8 +52,8 @@ main = do
   id <- T.startTracker trackers P.newProgress $ \pg -> do
     download mngr dest pg req ("test", "mp4")
 
-  -- forM_ [1..30] $ \_ -> do
-  --   T.collect trackers >>= print
-  --   threadDelay (1 * 1000 * 1000)
+  forM_ [1..30] $ \_ -> do
+    T.collect trackers >>= print
+    threadDelay (1 * 1000 * 1000)
 
   return ()

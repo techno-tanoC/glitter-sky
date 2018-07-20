@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cc876486415ce0c95d6cb5c8ab7d6a2b02b0db3e05b094d37896c79c4777e022
+-- hash: 0e622871b60dce9cd82463713960f4485d4c813225ca95b3a6a92caa192e722d
 
 name:           glitter-sky
 version:        0.1.0.0
@@ -31,13 +31,13 @@ executable glitter-sky
       src
   build-depends:
       base >=4.7 && <5
-    , bytestring >=0.10.8 && <0.11
-    , containers >=0.5.10 && <0.6
+    , bytestring
+    , containers
     , directory
     , filepath
-    , http-client >=0.5.13 && <0.6
-    , http-client-tls >=0.3.5 && <0.4
-    , http-types >=0.12.1 && <0.13
+    , http-client
+    , http-client-tls
+    , http-types
     , safe
     , unix
   default-language: Haskell2010
