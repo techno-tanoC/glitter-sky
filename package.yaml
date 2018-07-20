@@ -21,6 +21,7 @@ dependencies:
   - safe
   - directory
   - filepath
+  - unix
 
 executables:
   glitter-sky:
