@@ -1,7 +1,7 @@
-FROM fpco/stack-build:lts-12.1
-WORKDIR /usr/lib/gcc/x86_64-linux-gnu/5.4.0
-RUN cp crtbeginT.o crtbeginT.o.orig
-RUN cp crtbeginS.o crtbeginT.o
+FROM ubuntu:18.04
+
+RUN apt update && apt upgrade -y && apt install -y curl
+RUN curl -sSL https://get.haskellstack.org/ | sh
 
 WORKDIR /work
 
@@ -10,7 +10,7 @@ RUN stack setup
 
 ADD package.yaml .
 ADD glitter-sky.cabal .
-RUN stack --system-ghc --local-bin-path /sbin build --ghc-options '-optl-static -fPIC -optc-Os' || exit 0
+RUN stack build || exit 0
 
 ADD . .
 RUN stack --system-ghc --local-bin-path /sbin build --ghc-options '-optl-static -fPIC -optc-Os'
