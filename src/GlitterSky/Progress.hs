@@ -1,7 +1,6 @@
 module GlitterSky.Progress where
 
 import Control.Concurrent.MVar
-import qualified Data.ByteString as BS
 
 data Progress = Progress {
   contentLength :: Int,
