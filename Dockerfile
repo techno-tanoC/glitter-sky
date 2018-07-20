@@ -9,7 +9,6 @@ ADD stack.yaml .
 RUN stack setup
 
 ADD package.yaml .
-ADD glitter-sky.cabal .
 RUN stack build || exit 0
 
 ADD . .
