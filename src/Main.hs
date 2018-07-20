@@ -7,38 +7,53 @@ import qualified GlitterSky.Progress as P
 import qualified GlitterSky.Renamer as Renamer
 import qualified GlitterSky.Tracker as T
 
+-- import Control.Monad
+-- import Control.Concurrent
 import Control.Concurrent.MVar
-import qualified Control.Concurrent as C
 import qualified Data.ByteString as BS
+import qualified System.IO as IO
 import Network.HTTP.Client
 import Network.HTTP.Client.TLS (newTlsManager)
-import qualified System.IO as IO
+
+processChunk :: MVar P.Progress -> IO.Handle -> BS.ByteString -> IO ()
+processChunk pg h bs = do
+  P.progress pg $ BS.length bs
+  BS.hPut h bs
+  -- print pg
+
+download :: Manager
+         -> String
+         -> MVar P.Progress
+         -> Request
+         -> (Renamer.Name, Renamer.Ext)
+         -> IO ()
+download mngr dest pg req (name, ext) = do
+  withResponse req mngr $ \res -> do
+    case HTTP.findCL res of
+      Just cl -> P.setCL pg cl
+      Nothing -> return ()
+
+    File.actBinaryTempFile
+      (\path handle -> HTTP.readAll (responseBody res) $ processChunk pg handle)
+      (\path -> Renamer.copy path (dest, name, ext))
+  return ()
 
 main :: IO ()
 main = do
   mngr <- newTlsManager
   trackers <- T.newTrackers
 
-  let req = "https://cdn.img-conv.gamerch.com/img.gamerch.com/imascg-slstage-wiki/1454616481001.jpg"
   let dest = "/sky"
-  T.startTracker trackers P.newProgress $ \pg -> do
-    withResponse req mngr $ \res -> do
-      case HTTP.findCL res of
-        Just cl -> P.setCL pg cl
-        Nothing -> return ()
+  let req = ""
 
-      File.actBinaryTempFile
-        (\path handle -> HTTP.readAll (responseBody res) $ processChunk pg handle)
-        (\path -> do
-          putStrLn path
-          Renamer.copy path (dest, "morikubo", "jpg"))
-      putStrLn "end"
+  -- pg <- newMVar P.newProgress
+  -- download mngr dest pg req ("test", "mp4")
 
-  readLn :: IO String
+  id <- T.startTracker trackers P.newProgress $ \pg -> do
+    download mngr dest pg req ("test", "mp4")
+
+  -- forM_ [1..30] $ \_ -> do
+  --   T.collect trackers >>= print
+  --   threadDelay (1 * 1000 * 1000)
+
   return ()
-
-processChunk :: MVar P.Progress -> IO.Handle -> BS.ByteString -> IO ()
-processChunk pg h bs = do
-  P.progress pg $ BS.length bs
-  BS.hPut h bs
-  readMVar pg >>= print
