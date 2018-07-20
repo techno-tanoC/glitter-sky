@@ -3,7 +3,8 @@ module GlitterSky.Renamer where
 import Control.Concurrent.MVar
 import Control.Exception (finally)
 import qualified System.Directory as D
-import System.FilePath
+import System.FilePath ((</>))
+import System.Directory (copyFile)
 import System.IO.Unsafe (unsafePerformIO)
 
 type Sem = MVar ()
@@ -21,10 +22,10 @@ type Path = String
 type Name = String
 type Ext = String
 
-copy :: Path -> Name -> Ext -> IO ()
-copy path name ext = sync $ do
-  fresh <- freshName path name ext
-  undefined
+copy :: Path -> (Path, Name, Ext) -> IO ()
+copy from (path, name, ext) = sync $ do
+    fresh <- freshName path name ext
+    copyFile from fresh
 
 freshName :: Path -> Name -> Ext -> IO Name
 freshName path name ext = go 0
