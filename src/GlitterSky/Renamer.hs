@@ -6,6 +6,7 @@ import qualified System.Directory as D
 import System.FilePath ((</>))
 import System.Directory (copyFile)
 import System.IO.Unsafe (unsafePerformIO)
+import System.Posix.Files (setOwnerAndGroup)
 
 type Sem = MVar ()
 
@@ -26,6 +27,7 @@ copy :: Path -> (Path, Name, Ext) -> IO ()
 copy from (path, name, ext) = sync $ do
     fresh <- freshName path name ext
     copyFile from fresh
+    setOwnerAndGroup fresh (fromInteger 1000) (fromInteger 1000)
 
 freshName :: Path -> Name -> Ext -> IO Name
 freshName path name ext = go 0
