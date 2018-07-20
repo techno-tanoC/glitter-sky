@@ -1,6 +1,7 @@
 module GlitterSky.Renamer where
 
 import Control.Concurrent.MVar
+import Control.Exception (finally)
 import qualified System.Directory as D
 import System.FilePath
 import System.IO.Unsafe (unsafePerformIO)
@@ -12,11 +13,12 @@ sem :: Sem
 sem = unsafePerformIO $ newMVar ()
 
 sync :: IO a -> IO a
-sync f = do
-  () <- takeMVar sem
-  a <- f
-  putMVar sem ()
-  return a
+sync f = finally
+  (do
+    () <- takeMVar sem
+    f
+  )
+  (putMVar sem ())
 
 type Path = String
 type Name = String
@@ -28,9 +30,9 @@ copy path name ext = sync $ do
   undefined
 
 freshName :: Path -> Name -> Ext -> IO Name
-freshName p n e = go 0
+freshName path name ext = go 0
   where
-    fullPath i = p </> buildName n e i
+    fullPath i = path </> buildName name ext i
     go i = do
       b <- D.doesPathExist $ fullPath i
       if b then

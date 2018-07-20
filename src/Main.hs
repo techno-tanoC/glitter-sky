@@ -23,6 +23,7 @@ main = do
       case HTTP.findCL res of
         Just cl -> P.setCL pg cl
         Nothing -> return ()
+
       HTTP.readAll (responseBody res) $ \bs -> do
         P.progress pg $ BS.length bs
         readMVar pg >>= print

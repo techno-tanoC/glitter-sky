@@ -3,7 +3,6 @@ module GlitterSky.HTTP where
 import Control.Concurrent.MVar
 import qualified Data.ByteString as BS
 import Data.Char (chr)
-import Data.Int
 import Data.Word (Word8)
 import qualified Data.Map.Strict as Map
 import Network.HTTP.Client
