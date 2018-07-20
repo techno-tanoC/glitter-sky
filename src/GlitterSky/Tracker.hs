@@ -31,8 +31,8 @@ delete :: Id -> Trackers a -> IO ()
 delete id mvar = modifyMVarMasked_ mvar $ \ts -> do
   return $ Map.delete id ts
 
-startTracker :: a -> Trackers a -> (MVar a -> IO ()) -> IO C.ThreadId
-startTracker a mvar f = do
+startTracker :: Trackers a -> a -> (MVar a -> IO ()) -> IO C.ThreadId
+startTracker mvar a f = do
   c <- newMVar a
   C.forkIO $ finally
     (do
