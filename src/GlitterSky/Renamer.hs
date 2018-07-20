@@ -14,10 +14,7 @@ sem = unsafePerformIO $ newMVar ()
 
 sync :: IO a -> IO a
 sync f = finally
-  (do
-    () <- takeMVar sem
-    f
-  )
+  (takeMVar sem >> f)
   (putMVar sem ())
 
 type Path = String
