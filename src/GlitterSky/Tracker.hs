@@ -17,6 +17,9 @@ cancelTracker = C.killThread . threadId
 readContent :: Tracker a -> IO a
 readContent = readMVar . content
 
+readId :: Tracker a -> Id
+readId = show . threadId
+
 type Id = String
 type Trackers a = MVar (Map.Map Id (Tracker a))
 
