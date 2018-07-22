@@ -3,6 +3,8 @@ services:
   app:
     build: .
     command: ["/sbin/glitter-sky"]
+    ports:
+      - "8888:8888"
     volumes:
       - ./sky:/sky
     tty: true
