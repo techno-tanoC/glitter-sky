@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3869fc9ff128545409d142231655f7b69865bf11a67b4d3817dea1a9c047c8f8
+-- hash: 9eee5391aff40dd672cf74d4e8daa2ca4cd4fcd7e539b101cf3f56bedb92f221
 
 name:           glitter-sky
 version:        0.1.0.0
@@ -42,5 +42,4 @@ executable glitter-sky
     , safe
     , scotty
     , unix
-    , wai-middleware-static
   default-language: Haskell2010

@@ -23,7 +23,6 @@ dependencies:
   - filepath
   - unix
   - scotty
-  - wai-middleware-static
 
 executables:
   glitter-sky:
