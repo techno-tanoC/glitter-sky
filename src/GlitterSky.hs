@@ -37,19 +37,14 @@ download mngr dest pg req (name, ext) = do
       (\path -> Renamer.copy path (dest, name, ext))
   return ()
 
-startDownload :: Manager -> T.Trackers P.Progress -> IO ()
-startDownload mngr trackers = do
-  let dest = "/sky"
-  let req = ""
-
-  -- pg <- newMVar P.newProgress
-  -- download mngr dest pg req ("test", "mp4")
-
-  T.startTracker trackers P.newProgress $ \pg -> do
-    download mngr dest pg req ("test", "mp4")
-
-  forM_ [1..30] $ \_ -> do
-    T.collect trackers >>= print
-    threadDelay (1 * 1000 * 1000)
+startDownload :: Manager
+              -> T.Trackers P.Progress
+              -> String
+              -> Request
+              -> (Renamer.Name, Renamer.Ext)
+              -> IO ()
+startDownload mngr trackers dest req (name, ext) = do
+  T.startTracker trackers (P.newProgress name) $ \pg -> do
+    download mngr dest pg req (name, ext)
 
   return ()
