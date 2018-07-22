@@ -23,6 +23,8 @@ dependencies:
   - filepath
   - unix
   - scotty
+  - wai-cors
+  - aeson
 
 executables:
   glitter-sky:

@@ -5,11 +5,12 @@ import System.Directory
 import System.IO
 
 -- handle exceptions
-actBinaryTempFile :: (FilePath -> Handle -> IO a) -> (FilePath -> IO b) -> IO a
+actBinaryTempFile :: (FilePath -> Handle -> IO a) -> (FilePath -> IO b) -> IO b
 actBinaryTempFile f after = bracket
   (openBinaryTempFileWithDefaultPermissions "/tmp" "glitter-sky.temp")
   (\(path, handle) -> do
-    hClose handle
-    after path
     removeFile path)
-  (uncurry f)
+  (\(path, handle) -> do
+    f path handle
+    hClose handle
+    after path)

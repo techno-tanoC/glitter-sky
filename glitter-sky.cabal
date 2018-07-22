@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9eee5391aff40dd672cf74d4e8daa2ca4cd4fcd7e539b101cf3f56bedb92f221
+-- hash: 3add475413f0ba9652f7f6aa3fb9a675fd099ebc371ccaedcf93c432282a7c1f
 
 name:           glitter-sky
 version:        0.1.0.0
@@ -21,7 +21,8 @@ extra-source-files:
 executable glitter-sky
   main-is: Main.hs
   other-modules:
-      GlitterSky
+      GlitterSky.Container
+      GlitterSky.Download
       GlitterSky.File
       GlitterSky.HTTP
       GlitterSky.Progress
@@ -31,7 +32,8 @@ executable glitter-sky
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
     , bytestring
     , containers
     , directory
@@ -42,4 +44,5 @@ executable glitter-sky
     , safe
     , scotty
     , unix
+    , wai-cors
   default-language: Haskell2010

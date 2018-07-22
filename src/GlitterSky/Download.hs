@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module GlitterSky where
+module GlitterSky.Download where
 
 import qualified GlitterSky.File as File
 import qualified GlitterSky.HTTP as HTTP
@@ -18,7 +18,7 @@ processChunk :: MVar P.Progress -> IO.Handle -> BS.ByteString -> IO ()
 processChunk pg h bs = do
   P.progress pg $ BS.length bs
   BS.hPut h bs
-  -- print pg
+  -- readMVar pg >>= print
 
 download :: Manager
          -> String
